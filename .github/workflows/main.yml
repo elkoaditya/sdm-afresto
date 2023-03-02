@@ -6,15 +6,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: "34.101.115.53"
+      - name: "165.22.97.26"
         uses: appleboy/ssh-action@master
         with:
-          host: 'panel.fresto.biz'
+          host: '165.22.97.26'
           username: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
           port: 22
           script: |
             cd public_html
-            git pull git@github.com:elkoaditya/sdm.smkn7smg.git
+            git pull git@github.com:elkoaditya/sdm-afresto.git master
             git reset --hard
-            php artisan migrate:refresh --seed
+            composer install

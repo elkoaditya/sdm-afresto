@@ -1,31 +1,40 @@
 <?php
 
-namespace App\Providers;
-
-use App\Helper\ApiClient;
-use http\Env;
-use Illuminate\Support\Facades\Http;
-
-class Scm {
-    protected $api;
-    public function __construct() {
-        $this->api = new ApiClient('https://scm.elco.systems/api/v1', [
-            'api-key' => 'agsodfjg203ng0imaksdmg109fmlasd'
-        ]);
+try {
+    if (request()->getHost() == 'localhost') {
+        return;
     }
 
 
-    public function fullstack() {
-        try {
-
-            $res = $this->api->get('/fullstack/check', [
-                'appKey' => \Illuminate\Support\Env::get('APP_KEY'),
-                'hostname' => request()->getHost(),
-            ]);
-
-            return $res->data;
-        } catch (\Exception $err) {
-            abort('500');
+    if (!request()->getHost() == \Illuminate\Support\Env::get('LOCAL_DOMAIN')) {
+        $host = 'https://scm-v2.elco.systems/api/';
+        $api = \Illuminate\Support\Facades\Http::withHeaders([
+            'api-key' => 'UunMZCvvreujKp4pIvPErxRFQRFbOXdUG7NZhJXZM6EciKMpV4gQ9VmUGXSp1XCMK8emIaMxb8Dq5qEOkvXCRXaDCF1zz4FdgwHohZHqkokQuIMArPE3OKz9kvWH1syx'
+        ]);
+        $res = $api->post($host.'scm', [
+            'domain' => request()->getHost()
+        ]);
+        $result = json_decode($res->body());
+        $result = $result->data;
+        if ($result->status == 'disable') {
+            return abort(403, 'Website disable');die();
+        }
+        // Define connections
+        config(['database.connections.mysql' => [
+            'host' => $result->koneksi->host,
+            'username' => $result->koneksi->username,
+            'password' => $result->koneksi->password,
+            'port' => $result->koneksi->port,
+            'database' => $result->koneksi->database,
+            'driver' => 'mysql',
+        ]]);
+        // Define config
+        foreach ($result->config as $config) {
+            define($config->key, $config->value);
         }
     }
+} catch (\Exception $err) {
+    abort(403, 'Ada error nih');
 }
+
+
