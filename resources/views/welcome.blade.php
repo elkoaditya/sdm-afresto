@@ -236,7 +236,7 @@
 <body>
 <div id="container">
     <div id="inviteContainer">
-        <div class="logoContainer"><img class="logo" src="/images/fresto.png" width="600"/></div>
+        <div class="logoContainer"><img class="logo" src="{{APP_LOGO}}" width="600"/></div>
         <div class="acceptContainer">
             <form method="post" action="/login">@csrf
                 <h1>SDM {{APP_TITLE}}</h1>
