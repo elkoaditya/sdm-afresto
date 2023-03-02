@@ -1,0 +1,20 @@
+name: CD
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "34.101.115.53"
+        uses: appleboy/ssh-action@master
+        with:
+          host: 'panel.fresto.biz'
+          username: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd public_html
+            git pull git@github.com:elkoaditya/sdm.smkn7smg.git
+            git reset --hard
+            php artisan migrate:refresh --seed
